@@ -1,6 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\TodoController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
+
+Route::group(['middleware' => 'jwt.verify'], function () {
+    Route::get('logout', [AuthController::class, 'logout']);
+    Route::get('my-details', [UserController::class, 'myDetails']);
+    Route::get('get-users', [UserController::class, 'getUsers']);
+    Route::Put('update-user', [UserController::class, 'update']);
+    Route::apiResource('todos', TodoController::class);
 });
